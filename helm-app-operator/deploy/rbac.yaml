@@ -4,7 +4,7 @@ metadata:
   name: helm-app-operator
 rules:
 - apiGroups:
-  - app.coreos.com
+  - operators.coreos.com
   resources:
   - "*"
   verbs:
@@ -19,6 +19,7 @@ rules:
   - events
   - configmaps
   - secrets
+  - namespaces
   verbs:
   - "*"
 - apiGroups:

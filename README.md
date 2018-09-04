@@ -11,11 +11,6 @@ This repository serves as a template for easily creating managed stateless appli
 While the [Operator Lifecycle Manager][olm-repo] can only manage Operators, not all applications require developers to write a custom Operator.
 The [Helm App Operator Kit][helm-sdk] makes it possible to leverage a pre-existing Helm chart to deploy Kubernetes resources as a unified application.
 
-```sh
-git clone https://github.com/coreos/helm-app-operator-kit
-cd helm-app-operator-kit
-```
-
 ### Prerequisites
 
 - Kubernetes 1.9+ cluster
@@ -28,8 +23,9 @@ cd helm-app-operator-kit
 1) Run the following:
 
 ```sh
-$ git checkout git@github.com:operator-framework/helm-app-operator-kit.git && cd helm-app-operator-kit
+$ git clone git@github.com:operator-framework/helm-app-operator-kit.git && cd helm-app-operator-kit
 $ cd helm-app-operator && dep ensure && cd ..
+$ cp -r /path/to/helm/chart ./chart
 $ docker build -t quay.io/<namespace>/<chart>-operator --build-arg HELM_CHART=/path/to/helm/chart --build-arg API_VERSION=<group/version> --build-arg KIND=<Kind> .
 $ docker push quay.io/<namespace>/<chart>-operator
 ```
@@ -42,7 +38,7 @@ File                          | Action
 `deploy/cr.yaml`              | Make an instance of your custom resource (`kind`, `apiVersion` *must match the `docker build` args)
 `deploy/operator.yaml`        | Replace `<namespace>` and `<chart>` appropriately
 `deploy/rbac.yaml`            | Ensure the resources created by your chart are properly listed
-`deploy/olm-catalog/csv.yaml`             | Replace fields appropriately. Define RBAC in `spec.install.spec.permissions`. Ensure `spec.customresourcedefinitions.owned` correctly contains your CRD
+`deploy/olm-catalog/csv.yaml` | Replace fields appropriately. Define RBAC in `spec.install.spec.permissions`. Ensure `spec.customresourcedefinitions.owned` correctly contains your CRD
 `deploy/olm-catalog/crd.yaml` | Define your CRD (`kind`, `spec.version`, `spec.group` *must* match the `docker build` args)
 
 3) Apply the manifests to your Kubernetes cluster (if using Operator Lifecycle Manager):
@@ -62,7 +58,7 @@ $ kubectl create -n <operator-namespace> -f helm-app-operator/deploy/operator.ya
 
 ### Creating an instance of the example application
 
-After the `CustomResourceDefinition` and `ClusterServiceVersion-v1` resources for the new application have been applied, new instances of that app can be created:
+After the `CustomResourceDefinition` and `ClusterServiceVersion` resources for the new application have been applied, new instances of that app can be created:
 
 ```sh
 $ kubectl create -n <operator-namespace> -f helm-app-operator/deploy/cr.yaml
